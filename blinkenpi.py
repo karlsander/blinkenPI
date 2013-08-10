@@ -1,8 +1,6 @@
 import xml.etree.ElementTree as ET
 import sys, serial, time
 
-global settings
-
 class PIMovie(object):
 	def __init__(self):
 		self.frames = []
@@ -76,8 +74,7 @@ def parseBML(file):
 			f.addrow(row.text)
 		f.time = frame.attrib['duration']
 		m.addframe(f)
-
-
+		
 	return m
 
 def printMovie(toprint):
@@ -154,4 +151,3 @@ pi = convert(m)
 lite = setupPILite()
 
 play(lite, pi)
-
