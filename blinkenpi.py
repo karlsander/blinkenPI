@@ -1,22 +1,6 @@
 import xml.etree.ElementTree as ET
 import sys, serial, time
 
-class PIMovie(object):
-	def __init__(self):
-		self.frames = []
-		self.length = 0
-		self.settings = {}
-
-	def addframe(self, toadd):
-		self.frames.append(toadd)
-		self.length = self.length + 1
-
-
-class PIFrame(object):
-	def __init__(self):
-		self.framebuffer = '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
-		self.time = 0
-
 
 class Movie(object):
 	def __init__(self):
@@ -38,6 +22,12 @@ class Frame(object):
 	def addrow(self, toadd):
 		self.rows.append(toadd)
 		self.number_rows = self.number_rows + 1
+
+class PIFrame(object):
+	def __init__(self):
+		self.framebuffer = '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+		self.time = 0
+
 
 
 def checkSettings(tocheck):
@@ -65,6 +55,7 @@ def parseBML(file):
 	m = Movie()
 
 	m.settings = animation.attrib
+	m.settings['loop'] = animation.find('header').find('loop').text
 
 	checkSettings(m.settings)
 
@@ -98,7 +89,7 @@ def setupPILite():
 	try:
 		s.open()
 	except serial.SerialException, e:
-		sys.stderr.write("could not open port %r: %s\n" % (port, e))
+		sys.stderr.write("could not open port %r: %s\n" % (s.port, e))
 		sys.exit(1)
 
 
@@ -106,7 +97,7 @@ def setupPILite():
 
 
 def convert(toconvert):
-	pi = PIMovie()
+	pi = Movie()
 	pi.settings = toconvert.settings
 
 	for frame in toconvert.frames:
@@ -137,10 +128,16 @@ def convert(toconvert):
 	return pi
 
 def play(matrix, movie):
-	for frame in movie.frames:
-		sleeptime = float(frame.time) / 1000.0
-		matrix.write('$$$F' + frame.framebuffer + '\r')
-		time.sleep(sleeptime)
+
+	while True:
+		for frame in movie.frames:
+			sleeptime = float(frame.time) / 1000.0
+			matrix.write('$$$F' + frame.framebuffer + '\r')
+			time.sleep(sleeptime)
+
+		if (movie.settings['loop'] == 'no'):
+			break
+
 
 
 script, filename = sys.argv
