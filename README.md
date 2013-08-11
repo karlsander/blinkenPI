@@ -6,6 +6,7 @@ You can also generate them with Processing using [this library made by Robin Sen
 
 The script assumes that the serial port where the Pi Lite is connected is /dev/ttyAMA0.
 
+Works best with monochrome animations 14 pixels wide and 9 pixels high. If there are shades of grey, only black will mean the pixel is off. Everything else means the pixel is on.
 
 Usage
 -----
