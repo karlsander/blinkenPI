@@ -23,4 +23,9 @@ Requirements
 ------------
 pySerial
 
+You can install this on a vanilla raspbian setup with:
+```
+sudo apt-get install python-serial
+```
+Or just use your prefered method of installing python packages.
 
